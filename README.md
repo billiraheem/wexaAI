@@ -88,12 +88,6 @@ graph LR
 └─────────────────┘                     └──────────────────┘                   └──────────────┘
 ```
 
-**Why a standalone Express API instead of Next.js API routes?**
-
-1. **Separation of concerns**: The API is a true backend service with its own lifecycle, deployment, and scaling story. It could serve mobile apps, internal tools, or other consumers beyond the Next.js frontend.
-2. **Driver singleton**: The Neo4j driver must be a long-lived singleton that pools connections. In Next.js API routes (serverless functions on Vercel), each cold start creates a new driver instance, risking connection churn against CognoDB's 200-connection free-tier limit.
-3. **Interview defensibility**: A conventional layered architecture (routes → services → driver) demonstrates backend engineering understanding.
-
 ---
 
 ## Main Queries Explained
