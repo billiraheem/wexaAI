@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --font-sans: "Spectral", Georgia, serif;
+
+  --color-bg: #FBF8F3;
+  --color-bg-alt: #F3EDE4;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F9F5EF;
+  --color-border: #E8E0D4;
+  --color-border-light: #F0EAE0;
+
+  --color-text: #1A1A1A;
+  --color-text-secondary: #6B6560;
+  --color-text-tertiary: #9C9590;
+  --color-text-inverse: #FBF8F3;
+
+  --color-primary: #7C1D2E;
+  --color-primary-hover: #9B2842;
+  --color-primary-light: rgba(124, 29, 46, 0.08);
+  --color-primary-lighter: rgba(124, 29, 46, 0.04);
+
+  --color-accent: #C4416A;
+  --color-accent-hover: #D4567E;
+  --color-accent-light: rgba(196, 65, 106, 0.08);
+
+  --color-success: #2D7A4F;
+  --color-warning: #B8860B;
+  --color-error: #B91C1C;
+  --color-info: #4A6FA5;
+}
+
+.dark {
+  --color-bg: #0D0D0D;
+  --color-bg-alt: #161616;
+  --color-surface: #1A1A1A;
+  --color-surface-hover: #222222;
+  --color-border: #2A2A2A;
+  --color-border-light: #1F1F1F;
+
+  --color-text: #F5F0EB;
+  --color-text-secondary: #A09890;
+  --color-text-tertiary: #706860;
+  --color-text-inverse: #0D0D0D;
+
+  --color-primary: #D4567E;
+  --color-primary-hover: #E06A90;
+  --color-primary-light: rgba(212, 86, 126, 0.12);
+  --color-primary-lighter: rgba(212, 86, 126, 0.06);
+
+  --color-accent: #E88AA0;
+  --color-accent-hover: #F09DB2;
+  --color-accent-light: rgba(232, 138, 160, 0.1);
+
+  --color-success: #4ADE80;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #60A5FA;
+}
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-slide-up { animation: slide-up 0.3s ease-out; }
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-scale-in { animation: scale-in 0.2s ease-out; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
