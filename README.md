@@ -1,4 +1,4 @@
-# AutomatIQ — Automation Intelligence Dashboard
+# AutomatIQ: Automation Intelligence Dashboard
 
 A graph-database-backed web application for visualizing and analyzing an enterprise's automation landscape. Built with **CognoDB** (a managed graph database speaking openCypher), **Express.js** (TypeScript), and **Next.js** (App Router + Tailwind CSS).
 
@@ -19,7 +19,7 @@ AutomatIQ models an enterprise's automation ecosystem: AI agents ("virtual cowor
 
 ## Why a Graph Database?
 
-Impact-analysis and shared-dependency questions require traversing relationships of unknown depth. In SQL, this means recursive CTEs or application-side BFS across multiple join tables — queries that are awkward to write, harder to optimize, and painful to maintain as the schema evolves.
+Impact-analysis and shared-dependency questions require traversing relationships of unknown depth. In SQL, this means recursive CTEs or application-side BFS across multiple join tables, queries that are awkward to write, harder to optimize, and painful to maintain as the schema evolves.
 
 In Cypher (the query language CognoDB speaks), the same question is a single pattern match:
 
@@ -29,7 +29,7 @@ MATCH (a:Agent)-[:ASSIGNED_TO]->(w)
 RETURN w, a, t
 ```
 
-Finding shared dependencies between two workflows — a query that would require a self-join on at least three intermediate tables in SQL — is equally natural:
+Finding shared dependencies between two workflows: a query that would require a self-join on at least three intermediate tables in SQL is equally natural:
 
 ```cypher
 MATCH (w1:Workflow {name: $w1})-[:CONTAINS]->(:Task)-[:DEPENDS_ON]->(s:System)
@@ -108,7 +108,7 @@ Finds systems or tasks that two workflows both depend on by matching a path patt
 Counts distinct tasks and workflows per agent using `OPTIONAL MATCH` and `count(DISTINCT ...)`, sorted descending. Straightforward in both Cypher and SQL, but the graph model makes the joins implicit.
 
 ### 4. Shortest Path
-Uses Cypher's built-in `shortestPath()` function to find the shortest undirected path between any two named nodes. This is a BFS algorithm that graph databases execute natively — in SQL, you'd need recursive CTEs with cycle detection.
+Uses Cypher's built-in `shortestPath()` function to find the shortest undirected path between any two named nodes. This is a BFS algorithm that graph databases execute natively in SQL, you'd need recursive CTEs with cycle detection.
 
 ### 5. List/Detail Views
 Standard `MATCH` with `OPTIONAL MATCH` for immediate neighbors. Each detail view returns the node's properties plus all directly connected nodes.
@@ -160,7 +160,7 @@ cd server
 npm run seed
 ```
 
-This creates 117 nodes (18 agents, 16 workflows, 51 tasks, 18 systems, 8 pipelines, 6 departments) with dense relationships. The script is idempotent — safe to re-run.
+This creates 117 nodes (18 agents, 16 workflows, 51 tasks, 18 systems, 8 pipelines, 6 departments) with dense relationships. The script is idempotent so it is safe to re-run.
 
 ### 4. Run the Application
 
@@ -183,16 +183,16 @@ npm run dev
 ## Screenshots
 
 ### Dashboard
-![Dashboard — summary stats and quick actions](screenshots/dashboard.png)
+![Dashboard summary stats and quick actions](screenshots/dashboard.png)
 
 ### Graph Explorer
-![Graph Explorer — interactive force-directed graph visualization](screenshots/graph_explorer.png)
+![Graph Explorer: interactive force-directed graph visualization](screenshots/graph_explorer.png)
 
 ### Impact Analysis
-![Impact Analysis — cascading effects when Salesforce CRM goes down](screenshots/impact_analysis.png)
+![Impact Analysis: cascading effects when Salesforce CRM goes down](screenshots/impact_analysis.png)
 
 ### Agent Load
-![Agent Load — ranked table of agents by workload](screenshots/agent_load.png)
+![Agent Load: ranked table of agents by workload](screenshots/agent_load.png)
 
 ---
 
