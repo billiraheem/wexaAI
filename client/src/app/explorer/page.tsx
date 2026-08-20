@@ -9,7 +9,7 @@ import { ErrorPopup } from "@/components/ui/ErrorPopup";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useToast } from "@/components/ui/Toast";
 import { useTheme } from "@/hooks/useTheme";
-import { MousePointer2, X } from "lucide-react";
+
 
 import { GraphFilters } from "@/components/explorer/GraphFilters";
 import { NodeDetailSidePanel } from "@/components/explorer/NodeDetailSidePanel";
@@ -37,22 +37,11 @@ export default function ExplorerPage() {
   const [nodeDetail, setNodeDetail] = useState<Record<string, unknown> | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
-  const [showHint, setShowHint] = useState(true);
   const { addToast } = useToast();
   const { theme } = useTheme();
   const graphRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-
-  useEffect(() => {
-    const dismissed = sessionStorage.getItem("graphHintDismissed");
-    if (dismissed === "true") setShowHint(false);
-  }, []);
-
-  const dismissHint = () => {
-    setShowHint(false);
-    sessionStorage.setItem("graphHintDismissed", "true");
-  };
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -166,8 +155,11 @@ export default function ExplorerPage() {
         <h1 className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: "var(--color-text)" }}>
           Graph Explorer
         </h1>
-        <p className="text-sm mb-4" style={{ color: "var(--color-text-tertiary)" }}>
+        <p className="text-sm" style={{ color: "var(--color-text-tertiary)" }}>
           Interactive visualization of your automation graph
+        </p>
+        <p className="text-xs mb-4" style={{ color: "var(--color-text-tertiary)" }}>
+          Click any node to inspect its details and connections
         </p>
 
         <GraphFilters
@@ -179,32 +171,6 @@ export default function ExplorerPage() {
       </div>
 
       {error && <ErrorPopup message={error.message} onRetry={refetch} onClose={() => {}} />}
-
-      {/* Instruction hint */}
-      {showHint && !loading && filteredData.nodes.length > 0 && (
-        <div
-          className="mx-4 sm:mx-6 lg:mx-8 mb-3 px-4 py-2.5 rounded-xl flex items-center justify-between gap-3 animate-slide-up"
-          style={{
-            backgroundColor: "var(--color-primary-light)",
-            border: "1px solid var(--color-primary)",
-          }}
-        >
-          <div className="flex items-center gap-2 text-sm" style={{ color: "var(--color-primary)" }}>
-            <MousePointer2 className="w-4 h-4 shrink-0" />
-            <span className="font-medium">Click any node</span>
-            <span style={{ color: "var(--color-text-secondary)" }}>
-              to inspect its details and connections
-            </span>
-          </div>
-          <button
-            onClick={dismissHint}
-            className="p-1 rounded-lg transition-colors hover:bg-[var(--color-primary-lighter)] cursor-pointer"
-            style={{ color: "var(--color-primary)" }}
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
 
       {/* Graph Area */}
       <div
