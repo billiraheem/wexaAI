@@ -2,7 +2,7 @@
 
 A graph-database-backed web application for visualizing and analyzing an enterprise's automation landscape. Built with **CognoDB** (a managed graph database speaking openCypher), **Express.js** (TypeScript), and **Next.js** (App Router + Tailwind CSS).
 
-**[Live Demo →](#)** [*(AutomatIQ)*](https://automatiq.vercel.app/)
+**[Live Demo →](https://automatiq.vercel.app/)** | **[Watch Video Demo (MP4) →](screenshots/AutomatIQ.mp4)**
 
 ---
 
@@ -174,7 +174,11 @@ npm run dev
 
 ---
 
-## Screenshots
+## Screenshots & Demo Video
+
+### Video Walkthrough
+[![AutomatIQ Video Demo](screenshots/dashboard.png)](screenshots/AutomatIQ.mp4)
+> 🎬 **[Click here to watch the full screen recording (AutomatIQ.mp4)](screenshots/AutomatIQ.mp4)**
 
 ### Dashboard
 ![Dashboard summary stats and quick actions](screenshots/dashboard.png)
