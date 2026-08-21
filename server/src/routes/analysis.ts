@@ -38,9 +38,13 @@ router.get("/shared-deps", async (req: Request, res: Response, next: NextFunctio
   }
 });
 
-router.get("/agent-load", async (_req: Request, res: Response, next: NextFunction) => {
+router.get("/agent-load", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = await getAgentLoadRanking();
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit as string) || 10);
+    const sortBy = (req.query.sortBy as string) === "workflows" ? "workflows" : "tasks";
+
+    const result = await getAgentLoadRanking(page, limit, sortBy);
     res.json(result);
   } catch (err) {
     next(err);

@@ -2,7 +2,7 @@
 
 A graph-database-backed web application for visualizing and analyzing an enterprise's automation landscape. Built with **CognoDB** (a managed graph database speaking openCypher), **Express.js** (TypeScript), and **Next.js** (App Router + Tailwind CSS).
 
-**[Live Demo →](#)** *(link to be updated after deployment)*
+**[Live Demo →](#)** [*(link to be updated after deployment)*](https://automatiq.vercel.app/)
 
 ---
 
@@ -58,12 +58,12 @@ graph LR
 
 | Node | Properties | Count |
 |------|-----------|-------|
-| **Agent** | name, role, status | 18 |
-| **Workflow** | name, description, category | 16 |
-| **Task** | name, type, avgDurationMinutes | 51 |
-| **System** | name, type, vendor | 18 |
-| **DataPipeline** | name, direction | 8 |
-| **Department** | name | 6 |
+| **Agent** | name, role, status | 150 |
+| **Workflow** | name, description, category | 200 |
+| **Task** | name, type, avgDurationMinutes | 800 |
+| **System** | name, type, vendor | 150 |
+| **DataPipeline** | name, direction | 100 |
+| **Department** | name | 20 |
 
 ### Relationship Types
 

@@ -11,7 +11,8 @@ const password = process.env.COGNODB_PASSWORD!;
 
 const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 
-const departments = [
+// ─── 1. Core Curated Departments ───
+const curatedDepartments = [
   { name: "Finance" },
   { name: "Operations" },
   { name: "Sales & Marketing" },
@@ -20,47 +21,20 @@ const departments = [
   { name: "Customer Success" },
 ];
 
-const agents = [
-  { name: "Invoice Reconciliation Agent", role: "Financial Analyst", status: "active" },
-  { name: "Payroll Processing Agent", role: "Payroll Specialist", status: "active" },
-  { name: "Expense Audit Agent", role: "Compliance Analyst", status: "active" },
-  { name: "Order Fulfillment Agent", role: "Operations Coordinator", status: "active" },
-  { name: "Inventory Sync Agent", role: "Supply Chain Analyst", status: "active" },
-  { name: "Shipment Tracking Agent", role: "Logistics Coordinator", status: "active" },
-  { name: "Lead Scoring Agent", role: "Marketing Analyst", status: "active" },
-  { name: "Campaign Analytics Agent", role: "Marketing Strategist", status: "active" },
-  { name: "CRM Sync Agent", role: "Sales Operations", status: "active" },
-  { name: "Employee Onboarding Agent", role: "HR Coordinator", status: "active" },
-  { name: "PTO Management Agent", role: "HR Specialist", status: "idle" },
-  { name: "Benefits Enrollment Agent", role: "Benefits Coordinator", status: "active" },
-  { name: "Incident Response Agent", role: "SRE Engineer", status: "active" },
-  { name: "Infrastructure Monitor Agent", role: "DevOps Engineer", status: "active" },
-  { name: "Code Deployment Agent", role: "Release Engineer", status: "active" },
-  { name: "Ticket Triage Agent", role: "Support Analyst", status: "active" },
-  { name: "Customer Health Agent", role: "Customer Success Manager", status: "active" },
-  { name: "Churn Prediction Agent", role: "Data Scientist", status: "idle" },
+const additionalDeptNames = [
+  "Legal & Compliance", "Procurement", "Security Operations", "Product Management",
+  "Risk Management", "Data Platform", "Customer Support", "Facilities & Real Estate",
+  "Business Development", "Quality Assurance", "Executive Office", "Revenue Operations",
+  "Strategic Partnerships", "Treasury Ops"
 ];
 
-const workflows = [
-  { name: "Order-to-Cash", description: "End-to-end order processing from receipt to revenue recognition", category: "Financial" },
-  { name: "Procure-to-Pay", description: "Procurement lifecycle from purchase request to vendor payment", category: "Financial" },
-  { name: "Month-End Close", description: "Monthly financial reconciliation and reporting cycle", category: "Financial" },
-  { name: "Employee Lifecycle", description: "Full employee journey from hiring to offboarding", category: "HR" },
-  { name: "Talent Acquisition", description: "Recruiting pipeline from job posting to offer acceptance", category: "HR" },
-  { name: "IT Incident Management", description: "Incident detection, escalation, and resolution process", category: "IT" },
-  { name: "CI/CD Pipeline", description: "Continuous integration and deployment automation", category: "IT" },
-  { name: "Customer Onboarding", description: "New customer setup and activation workflow", category: "Customer Success" },
-  { name: "Subscription Renewal", description: "Automated subscription renewal and billing process", category: "Customer Success" },
-  { name: "Marketing Campaign Ops", description: "Campaign planning, execution, and performance tracking", category: "Marketing" },
-  { name: "Inventory Replenishment", description: "Automated inventory monitoring and reorder process", category: "Operations" },
-  { name: "Compliance Audit", description: "Regulatory compliance verification and reporting", category: "Financial" },
-  { name: "Data Quality Assurance", description: "Cross-system data validation and cleansing", category: "IT" },
-  { name: "Customer Support Escalation", description: "Tiered support escalation and resolution tracking", category: "Customer Success" },
-  { name: "Revenue Forecasting", description: "Predictive revenue modeling and pipeline analysis", category: "Financial" },
-  { name: "Vendor Management", description: "Vendor evaluation, onboarding, and performance tracking", category: "Operations" },
+const allDepartments = [
+  ...curatedDepartments,
+  ...additionalDeptNames.map((name) => ({ name })),
 ];
 
-const systems = [
+// ─── 2. Core Curated Systems ───
+const curatedSystems = [
   { name: "Salesforce CRM", type: "CRM", vendor: "Salesforce" },
   { name: "SAP ERP", type: "ERP", vendor: "SAP" },
   { name: "Snowflake Warehouse", type: "Data Warehouse", vendor: "Snowflake" },
@@ -81,7 +55,46 @@ const systems = [
   { name: "Datadog Monitoring", type: "Observability", vendor: "Datadog" },
 ];
 
-const tasks = [
+const systemVendors = ["AWS", "Google Cloud", "Microsoft Azure", "Oracle", "IBM", "HashiCorp", "Databricks", "Elastic", "Redis", "MongoDB"];
+const systemTypes = ["Database", "Cache", "Message Broker", "Microservice", "API Gateway", "Analytics Engine", "Storage Bucket", "Security Vault"];
+
+const generatedSystems: Array<{ name: string; type: string; vendor: string }> = [];
+const systemNamesList: string[] = curatedSystems.map((s) => s.name);
+
+for (let i = 1; i <= 132; i++) {
+  const v = systemVendors[i % systemVendors.length];
+  const t = systemTypes[i % systemTypes.length];
+  const name = `${v} ${t} Service #${i}`;
+  generatedSystems.push({ name, type: t, vendor: v });
+  systemNamesList.push(name);
+}
+
+const allSystems = [...curatedSystems, ...generatedSystems];
+
+// ─── 3. Core Curated Data Pipelines ───
+const curatedPipelines = [
+  { name: "CRM-to-Warehouse Sync", direction: "downstream" },
+  { name: "ERP Order Feed", direction: "downstream" },
+  { name: "HCM Payroll Export", direction: "downstream" },
+  { name: "Billing Event Stream", direction: "downstream" },
+  { name: "Support Ticket Ingest", direction: "upstream" },
+  { name: "Marketing Attribution Pipeline", direction: "downstream" },
+  { name: "Monitoring Metrics Flow", direction: "downstream" },
+  { name: "Identity Audit Log", direction: "downstream" },
+];
+
+const generatedPipelines: Array<{ name: string; direction: string }> = [];
+for (let i = 1; i <= 92; i++) {
+  generatedPipelines.push({
+    name: `Pipeline Alpha-${i} (${i % 2 === 0 ? "Downstream" : "Upstream"})`,
+    direction: i % 2 === 0 ? "downstream" : "upstream",
+  });
+}
+
+const allPipelines = [...curatedPipelines, ...generatedPipelines];
+
+// ─── 4. Core Curated Tasks ───
+const curatedTasks = [
   { name: "Validate Invoice Line Items", type: "Validation", avgDurationMinutes: 5 },
   { name: "Match PO to Receipt", type: "Matching", avgDurationMinutes: 3 },
   { name: "Generate Aging Report", type: "Reporting", avgDurationMinutes: 8 },
@@ -135,18 +148,104 @@ const tasks = [
   { name: "Configure Integrations", type: "Configuration", avgDurationMinutes: 20 },
 ];
 
-const dataPipelines = [
-  { name: "CRM-to-Warehouse Sync", direction: "downstream" },
-  { name: "ERP Order Feed", direction: "downstream" },
-  { name: "HCM Payroll Export", direction: "downstream" },
-  { name: "Billing Event Stream", direction: "downstream" },
-  { name: "Support Ticket Ingest", direction: "upstream" },
-  { name: "Marketing Attribution Pipeline", direction: "downstream" },
-  { name: "Monitoring Metrics Flow", direction: "downstream" },
-  { name: "Identity Audit Log", direction: "downstream" },
+const taskTypes = ["Validation", "Data Sync", "Reporting", "Security", "Analytics", "Automation", "Transformation", "Audit"];
+
+const generatedTasks: Array<{ name: string; type: string; avgDurationMinutes: number }> = [];
+const taskNamesList: string[] = curatedTasks.map((t) => t.name);
+
+for (let i = 1; i <= 749; i++) {
+  const type = taskTypes[i % taskTypes.length];
+  const name = `Automated Task Task-${i} (${type})`;
+  generatedTasks.push({
+    name,
+    type,
+    avgDurationMinutes: (i % 15) + 1,
+  });
+  taskNamesList.push(name);
+}
+
+const allTasks = [...curatedTasks, ...generatedTasks];
+
+// ─── 5. Core Curated Workflows ───
+const curatedWorkflows = [
+  { name: "Order-to-Cash", description: "End-to-end order processing from receipt to revenue recognition", category: "Financial" },
+  { name: "Procure-to-Pay", description: "Procurement lifecycle from purchase request to vendor payment", category: "Financial" },
+  { name: "Month-End Close", description: "Monthly financial reconciliation and reporting cycle", category: "Financial" },
+  { name: "Employee Lifecycle", description: "Full employee journey from hiring to offboarding", category: "HR" },
+  { name: "Talent Acquisition", description: "Recruiting pipeline from job posting to offer acceptance", category: "HR" },
+  { name: "IT Incident Management", description: "Incident detection, escalation, and resolution process", category: "IT" },
+  { name: "CI/CD Pipeline", description: "Continuous integration and deployment automation", category: "IT" },
+  { name: "Customer Onboarding", description: "New customer setup and activation workflow", category: "Customer Success" },
+  { name: "Subscription Renewal", description: "Automated subscription renewal and billing process", category: "Customer Success" },
+  { name: "Marketing Campaign Ops", description: "Campaign planning, execution, and performance tracking", category: "Marketing" },
+  { name: "Inventory Replenishment", description: "Automated inventory monitoring and reorder process", category: "Operations" },
+  { name: "Compliance Audit", description: "Regulatory compliance verification and reporting", category: "Financial" },
+  { name: "Data Quality Assurance", description: "Cross-system data validation and cleansing", category: "IT" },
+  { name: "Customer Support Escalation", description: "Tiered support escalation and resolution tracking", category: "Customer Success" },
+  { name: "Revenue Forecasting", description: "Predictive revenue modeling and pipeline analysis", category: "Financial" },
+  { name: "Vendor Management", description: "Vendor evaluation, onboarding, and performance tracking", category: "Operations" },
 ];
 
-const workflowDepartments: Record<string, string> = {
+const categories = ["Financial", "HR", "IT", "Customer Success", "Marketing", "Operations", "Security", "Legal"];
+const generatedWorkflows: Array<{ name: string; description: string; category: string }> = [];
+const workflowNamesList: string[] = curatedWorkflows.map((w) => w.name);
+
+for (let i = 1; i <= 184; i++) {
+  const cat = categories[i % categories.length];
+  const name = `Workflow Process-X${i} (${cat})`;
+  generatedWorkflows.push({
+    name,
+    description: `Automated enterprise workflow for ${cat} operations batch #${i}`,
+    category: cat,
+  });
+  workflowNamesList.push(name);
+}
+
+const allWorkflows = [...curatedWorkflows, ...generatedWorkflows];
+
+// ─── 6. Core Curated Agents ───
+const curatedAgents = [
+  { name: "Invoice Reconciliation Agent", role: "Financial Analyst", status: "active" },
+  { name: "Payroll Processing Agent", role: "Payroll Specialist", status: "active" },
+  { name: "Expense Audit Agent", role: "Compliance Analyst", status: "active" },
+  { name: "Order Fulfillment Agent", role: "Operations Coordinator", status: "active" },
+  { name: "Inventory Sync Agent", role: "Supply Chain Analyst", status: "active" },
+  { name: "Shipment Tracking Agent", role: "Logistics Coordinator", status: "active" },
+  { name: "Lead Scoring Agent", role: "Marketing Analyst", status: "active" },
+  { name: "Campaign Analytics Agent", role: "Marketing Strategist", status: "active" },
+  { name: "CRM Sync Agent", role: "Sales Operations", status: "active" },
+  { name: "Employee Onboarding Agent", role: "HR Coordinator", status: "active" },
+  { name: "PTO Management Agent", role: "HR Specialist", status: "idle" },
+  { name: "Benefits Enrollment Agent", role: "Benefits Coordinator", status: "active" },
+  { name: "Incident Response Agent", role: "SRE Engineer", status: "active" },
+  { name: "Infrastructure Monitor Agent", role: "DevOps Engineer", status: "active" },
+  { name: "Code Deployment Agent", role: "Release Engineer", status: "active" },
+  { name: "Ticket Triage Agent", role: "Support Analyst", status: "active" },
+  { name: "Customer Health Agent", role: "Customer Success Manager", status: "active" },
+  { name: "Churn Prediction Agent", role: "Data Scientist", status: "idle" },
+];
+
+const roles = ["Financial Specialist", "Data Engineer", "Security Analyst", "Operations Specialist", "Automation Bot", "AI Assistant"];
+const generatedAgents: Array<{ name: string; role: string; status: string }> = [];
+const agentNamesList: string[] = curatedAgents.map((a) => a.name);
+
+for (let i = 1; i <= 132; i++) {
+  const role = roles[i % roles.length];
+  const name = `AI Virtual Coworker Bot-${i}`;
+  generatedAgents.push({
+    name,
+    role,
+    status: i % 4 === 0 ? "idle" : "active",
+  });
+  agentNamesList.push(name);
+}
+
+const allAgents = [...curatedAgents, ...generatedAgents];
+
+// ─── 7. Mappings & Relationships ───
+
+// Curated mappings (preserved 100%)
+const curatedWorkflowDepartments: Record<string, string> = {
   "Order-to-Cash": "Finance",
   "Procure-to-Pay": "Finance",
   "Month-End Close": "Finance",
@@ -165,7 +264,7 @@ const workflowDepartments: Record<string, string> = {
   "Vendor Management": "Operations",
 };
 
-const workflowTasks: Record<string, string[]> = {
+const curatedWorkflowTasks: Record<string, string[]> = {
   "Order-to-Cash": ["Validate Invoice Line Items", "Match PO to Receipt", "Generate Aging Report", "Process Payment Batch"],
   "Procure-to-Pay": ["Route Purchase Approval", "Match PO to Receipt", "Process Payment Batch", "Validate Invoice Line Items"],
   "Month-End Close": ["Reconcile Bank Statements", "Generate Aging Report", "Validate Compliance Rules", "Generate Audit Trail"],
@@ -184,7 +283,7 @@ const workflowTasks: Record<string, string[]> = {
   "Vendor Management": ["Evaluate Vendor Performance", "Onboard New Vendor", "Route Purchase Approval", "Validate Compliance Rules"],
 };
 
-const taskSystems: Record<string, string[]> = {
+const curatedTaskSystems: Record<string, string[]> = {
   "Validate Invoice Line Items": ["SAP ERP", "NetSuite Financials"],
   "Match PO to Receipt": ["SAP ERP"],
   "Generate Aging Report": ["NetSuite Financials", "Tableau Analytics"],
@@ -238,7 +337,7 @@ const taskSystems: Record<string, string[]> = {
   "Configure Integrations": ["Okta Identity", "Slack Messaging"],
 };
 
-const agentWorkflows: Record<string, string[]> = {
+const curatedAgentWorkflows: Record<string, string[]> = {
   "Invoice Reconciliation Agent": ["Order-to-Cash", "Procure-to-Pay"],
   "Payroll Processing Agent": ["Employee Lifecycle"],
   "Expense Audit Agent": ["Compliance Audit", "Procure-to-Pay"],
@@ -259,7 +358,7 @@ const agentWorkflows: Record<string, string[]> = {
   "Churn Prediction Agent": ["Subscription Renewal", "Revenue Forecasting"],
 };
 
-const agentTasks: Record<string, string[]> = {
+const curatedAgentTasks: Record<string, string[]> = {
   "Invoice Reconciliation Agent": ["Validate Invoice Line Items", "Match PO to Receipt", "Generate Aging Report"],
   "Payroll Processing Agent": ["Calculate Payroll Deductions", "Submit Tax Filings"],
   "Expense Audit Agent": ["Audit Expense Claims", "Verify Receipt Authenticity", "Validate Compliance Rules"],
@@ -280,7 +379,7 @@ const agentTasks: Record<string, string[]> = {
   "Churn Prediction Agent": ["Predict Churn Risk", "Send Renewal Reminder", "Process Subscription Change"],
 };
 
-const pipelineConnections: { from: string; pipeline: string; to: string }[] = [
+const curatedPipelineConnections: { from: string; pipeline: string; to: string }[] = [
   { from: "Salesforce CRM", pipeline: "CRM-to-Warehouse Sync", to: "Snowflake Warehouse" },
   { from: "SAP ERP", pipeline: "ERP Order Feed", to: "Snowflake Warehouse" },
   { from: "Workday HCM", pipeline: "HCM Payroll Export", to: "NetSuite Financials" },
@@ -293,13 +392,13 @@ const pipelineConnections: { from: string; pipeline: string; to: string }[] = [
 
 async function seed() {
   const session = driver.session();
-  console.log("Starting seed...");
+  console.log("Starting scale-up seed process (1,420 nodes, ~3,200 relationships)...");
 
   try {
-    console.log("Clearing existing data...");
+    console.log("1/12 Clearing existing data...");
     await session.run("MATCH (n) DETACH DELETE n");
 
-    console.log("Creating indexes...");
+    console.log("2/12 Creating database indexes...");
     await session.run("CREATE INDEX agent_name IF NOT EXISTS FOR (a:Agent) ON (a.name)");
     await session.run("CREATE INDEX workflow_name IF NOT EXISTS FOR (w:Workflow) ON (w.name)");
     await session.run("CREATE INDEX task_name IF NOT EXISTS FOR (t:Task) ON (t.name)");
@@ -307,23 +406,27 @@ async function seed() {
     await session.run("CREATE INDEX pipeline_name IF NOT EXISTS FOR (p:DataPipeline) ON (p.name)");
     await session.run("CREATE INDEX department_name IF NOT EXISTS FOR (d:Department) ON (d.name)");
 
-    console.log("Creating departments...");
-    for (const dept of departments) {
-      await session.run("MERGE (d:Department {name: $name})", dept);
-    }
+    console.log(`3/12 Batch inserting ${allDepartments.length} departments...`);
+    await session.run(
+      "UNWIND $batch AS d MERGE (:Department {name: d.name})",
+      { batch: allDepartments }
+    );
 
-    console.log("Creating systems...");
-    for (const sys of systems) {
-      await session.run("MERGE (s:System {name: $name}) SET s.type = $type, s.vendor = $vendor", sys);
-    }
+    console.log(`4/12 Batch inserting ${allSystems.length} systems...`);
+    await session.run(
+      "UNWIND $batch AS s MERGE (sys:System {name: s.name}) SET sys.type = s.type, sys.vendor = s.vendor",
+      { batch: allSystems }
+    );
 
-    console.log("Creating data pipelines...");
-    for (const pipeline of dataPipelines) {
-      await session.run("MERGE (p:DataPipeline {name: $name}) SET p.direction = $direction", pipeline);
-    }
+    console.log(`5/12 Batch inserting ${allPipelines.length} data pipelines...`);
+    await session.run(
+      "UNWIND $batch AS p MERGE (pipe:DataPipeline {name: p.name}) SET pipe.direction = p.direction",
+      { batch: allPipelines }
+    );
 
-    console.log("Creating pipeline connections...");
-    for (const conn of pipelineConnections) {
+    console.log("6/12 Connecting data pipelines to systems...");
+    // Curated connections
+    for (const conn of curatedPipelineConnections) {
       await session.run(
         `
         MATCH (from:System {name: $from})
@@ -334,107 +437,175 @@ async function seed() {
         conn
       );
     }
+    // Generated pipeline connections
+    const generatedPipelineConns = generatedPipelines.map((p, idx) => {
+      const fromSys = systemNamesList[idx % systemNamesList.length];
+      const toSys = systemNamesList[(idx + 5) % systemNamesList.length];
+      return { from: fromSys, pipeline: p.name, to: toSys };
+    });
+    await session.run(
+      `
+      UNWIND $batch AS c
+      MATCH (from:System {name: c.from})
+      MATCH (p:DataPipeline {name: c.pipeline})
+      MATCH (to:System {name: c.to})
+      MERGE (from)-[:FEEDS]->(p)-[:FEEDS]->(to)
+      `,
+      { batch: generatedPipelineConns }
+    );
 
-    console.log("Creating tasks...");
-    for (const task of tasks) {
-      await session.run(
-        "MERGE (t:Task {name: $name}) SET t.type = $type, t.avgDurationMinutes = $avgDurationMinutes",
-        task
-      );
-    }
+    console.log(`7/12 Batch inserting ${allTasks.length} tasks...`);
+    await session.run(
+      "UNWIND $batch AS t MERGE (task:Task {name: t.name}) SET task.type = t.type, task.avgDurationMinutes = t.avgDurationMinutes",
+      { batch: allTasks }
+    );
 
-    console.log("Creating task-system dependencies...");
-    for (const [taskName, systemNames] of Object.entries(taskSystems)) {
-      for (const systemName of systemNames) {
-        await session.run(
-          `
-          MATCH (t:Task {name: $taskName})
-          MATCH (s:System {name: $systemName})
-          MERGE (t)-[:DEPENDS_ON]->(s)
-          `,
-          { taskName, systemName }
-        );
+    console.log("8/12 Connecting task-system dependencies...");
+    // Curated task-system
+    const taskSysPairs: { taskName: string; systemName: string }[] = [];
+    for (const [taskName, sysList] of Object.entries(curatedTaskSystems)) {
+      for (const systemName of sysList) {
+        taskSysPairs.push({ taskName, systemName });
       }
     }
+    // Generated task-system
+    generatedTasks.forEach((t, idx) => {
+      const sys1 = systemNamesList[idx % systemNamesList.length];
+      const sys2 = systemNamesList[(idx + 7) % systemNamesList.length];
+      taskSysPairs.push({ taskName: t.name, systemName: sys1 });
+      taskSysPairs.push({ taskName: t.name, systemName: sys2 });
+    });
 
-    console.log("Creating workflows...");
-    for (const wf of workflows) {
-      await session.run(
-        "MERGE (w:Workflow {name: $name}) SET w.description = $description, w.category = $category",
-        wf
-      );
-    }
+    await session.run(
+      `
+      UNWIND $batch AS pair
+      MATCH (t:Task {name: pair.taskName})
+      MATCH (s:System {name: pair.systemName})
+      MERGE (t)-[:DEPENDS_ON]->(s)
+      `,
+      { batch: taskSysPairs }
+    );
 
-    console.log("Creating workflow-task relationships...");
-    for (const [wfName, taskNames] of Object.entries(workflowTasks)) {
-      for (const taskName of taskNames) {
-        await session.run(
-          `
-          MATCH (w:Workflow {name: $wfName})
-          MATCH (t:Task {name: $taskName})
-          MERGE (w)-[:CONTAINS]->(t)
-          `,
-          { wfName, taskName }
-        );
+    console.log(`9/12 Batch inserting ${allWorkflows.length} workflows...`);
+    await session.run(
+      "UNWIND $batch AS w MERGE (wf:Workflow {name: w.name}) SET wf.description = w.description, wf.category = w.category",
+      { batch: allWorkflows }
+    );
+
+    console.log("10/12 Connecting workflow-task & workflow-department relationships...");
+    const wfTaskPairs: { wfName: string; taskName: string }[] = [];
+    for (const [wfName, taskList] of Object.entries(curatedWorkflowTasks)) {
+      for (const taskName of taskList) {
+        wfTaskPairs.push({ wfName, taskName });
       }
     }
+    generatedWorkflows.forEach((w, idx) => {
+      const t1 = taskNamesList[idx % taskNamesList.length];
+      const t2 = taskNamesList[(idx + 3) % taskNamesList.length];
+      const t3 = taskNamesList[(idx + 10) % taskNamesList.length];
+      wfTaskPairs.push({ wfName: w.name, taskName: t1 });
+      wfTaskPairs.push({ wfName: w.name, taskName: t2 });
+      wfTaskPairs.push({ wfName: w.name, taskName: t3 });
+    });
 
-    console.log("Creating workflow-department relationships...");
-    for (const [wfName, deptName] of Object.entries(workflowDepartments)) {
-      await session.run(
-        `
-        MATCH (w:Workflow {name: $wfName})
-        MATCH (d:Department {name: $deptName})
-        MERGE (w)-[:OWNED_BY]->(d)
-        `,
-        { wfName, deptName }
-      );
+    await session.run(
+      `
+      UNWIND $batch AS pair
+      MATCH (w:Workflow {name: pair.wfName})
+      MATCH (t:Task {name: pair.taskName})
+      MERGE (w)-[:CONTAINS]->(t)
+      `,
+      { batch: wfTaskPairs }
+    );
+
+    const wfDeptPairs: { wfName: string; deptName: string }[] = [];
+    for (const [wfName, deptName] of Object.entries(curatedWorkflowDepartments)) {
+      wfDeptPairs.push({ wfName, deptName });
     }
+    generatedWorkflows.forEach((w, idx) => {
+      const dept = allDepartments[idx % allDepartments.length].name;
+      wfDeptPairs.push({ wfName: w.name, deptName: dept });
+    });
 
-    console.log("Creating agents...");
-    for (const agent of agents) {
-      await session.run(
-        "MERGE (a:Agent {name: $name}) SET a.role = $role, a.status = $status",
-        agent
-      );
-    }
+    await session.run(
+      `
+      UNWIND $batch AS pair
+      MATCH (w:Workflow {name: pair.wfName})
+      MATCH (d:Department {name: pair.deptName})
+      MERGE (w)-[:OWNED_BY]->(d)
+      `,
+      { batch: wfDeptPairs }
+    );
 
-    console.log("Creating agent-workflow assignments...");
-    for (const [agentName, wfNames] of Object.entries(agentWorkflows)) {
-      for (const wfName of wfNames) {
-        await session.run(
-          `
-          MATCH (a:Agent {name: $agentName})
-          MATCH (w:Workflow {name: $wfName})
-          MERGE (a)-[:ASSIGNED_TO]->(w)
-          `,
-          { agentName, wfName }
-        );
+    console.log(`11/12 Batch inserting ${allAgents.length} agents...`);
+    await session.run(
+      "UNWIND $batch AS a MERGE (ag:Agent {name: a.name}) SET ag.role = a.role, ag.status = a.status",
+      { batch: allAgents }
+    );
+
+    console.log("12/12 Connecting agent assignments & executions...");
+    const agentWfPairs: { agentName: string; wfName: string }[] = [];
+    for (const [agentName, wfList] of Object.entries(curatedAgentWorkflows)) {
+      for (const wfName of wfList) {
+        agentWfPairs.push({ agentName, wfName });
       }
     }
+    generatedAgents.forEach((a, idx) => {
+      const w1 = workflowNamesList[idx % workflowNamesList.length];
+      const w2 = workflowNamesList[(idx + 4) % workflowNamesList.length];
+      agentWfPairs.push({ agentName: a.name, wfName: w1 });
+      agentWfPairs.push({ agentName: a.name, wfName: w2 });
+    });
 
-    console.log("Creating agent-task executions...");
-    for (const [agentName, taskNames] of Object.entries(agentTasks)) {
-      for (const taskName of taskNames) {
-        await session.run(
-          `
-          MATCH (a:Agent {name: $agentName})
-          MATCH (t:Task {name: $taskName})
-          MERGE (a)-[:EXECUTES]->(t)
-          `,
-          { agentName, taskName }
-        );
+    await session.run(
+      `
+      UNWIND $batch AS pair
+      MATCH (a:Agent {name: pair.agentName})
+      MATCH (w:Workflow {name: pair.wfName})
+      MERGE (a)-[:ASSIGNED_TO]->(w)
+      `,
+      { batch: agentWfPairs }
+    );
+
+    const agentTaskPairs: { agentName: string; taskName: string }[] = [];
+    for (const [agentName, taskList] of Object.entries(curatedAgentTasks)) {
+      for (const taskName of taskList) {
+        agentTaskPairs.push({ agentName, taskName });
       }
     }
+    generatedAgents.forEach((a, idx) => {
+      const t1 = taskNamesList[idx % taskNamesList.length];
+      const t2 = taskNamesList[(idx + 8) % taskNamesList.length];
+      agentTaskPairs.push({ agentName: a.name, taskName: t1 });
+      agentTaskPairs.push({ agentName: a.name, taskName: t2 });
+    });
 
-    console.log("\nSeed complete!");
-    console.log(`  Departments: ${departments.length}`);
-    console.log(`  Systems: ${systems.length}`);
-    console.log(`  Data Pipelines: ${dataPipelines.length}`);
-    console.log(`  Tasks: ${tasks.length}`);
-    console.log(`  Workflows: ${workflows.length}`);
-    console.log(`  Agents: ${agents.length}`);
-    console.log(`  Total nodes: ${departments.length + systems.length + dataPipelines.length + tasks.length + workflows.length + agents.length}`);
+    await session.run(
+      `
+      UNWIND $batch AS pair
+      MATCH (a:Agent {name: pair.agentName})
+      MATCH (t:Task {name: pair.taskName})
+      MERGE (a)-[:EXECUTES]->(t)
+      `,
+      { batch: agentTaskPairs }
+    );
+
+    const totalNodes = allDepartments.length + allSystems.length + allPipelines.length + allTasks.length + allWorkflows.length + allAgents.length;
+    const totalRels = generatedPipelineConns.length * 2 + taskSysPairs.length + wfTaskPairs.length + wfDeptPairs.length + agentWfPairs.length + agentTaskPairs.length;
+
+    console.log("\n=======================================================");
+    console.log(" SUCCESS! Enterprise Graph Scale Seeding Complete!");
+    console.log("=======================================================");
+    console.log(`  Departments:      ${allDepartments.length}`);
+    console.log(`  Systems:          ${allSystems.length}`);
+    console.log(`  Data Pipelines:   ${allPipelines.length}`);
+    console.log(`  Tasks:            ${allTasks.length}`);
+    console.log(`  Workflows:        ${allWorkflows.length}`);
+    console.log(`  Agents:           ${allAgents.length}`);
+    console.log(`-------------------------------------------------------`);
+    console.log(`  TOTAL NODES:      ${totalNodes}`);
+    console.log(`  TOTAL EDGES:      ~${totalRels}`);
+    console.log("=======================================================\n");
   } catch (err) {
     console.error("Seed failed:", err);
     process.exit(1);

@@ -1,3 +1,4 @@
+import neo4j from "neo4j-driver";
 import { getDriver } from "../config/database";
 import { ImpactResult, AgentLoad, SharedDependency } from "../types";
 
@@ -99,27 +100,61 @@ export async function getSharedDependencies(
   }
 }
 
-export async function getAgentLoadRanking(): Promise<AgentLoad[]> {
+export interface AgentLoadResponse {
+  data: AgentLoad[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export async function getAgentLoadRanking(
+  page: number = 1,
+  limit: number = 10,
+  sortBy: "tasks" | "workflows" = "tasks"
+): Promise<AgentLoadResponse> {
   const driver = getDriver();
   const session = driver.session();
 
   try {
-    const result = await session.run(`
+    const skip = (page - 1) * limit;
+
+    const totalResult = await session.run(`MATCH (a:Agent) RETURN count(a) AS total`);
+    const total = totalResult.records[0]?.get("total").toNumber() || 0;
+
+    const orderByClause =
+      sortBy === "workflows"
+        ? "ORDER BY workflowCount DESC, taskCount DESC"
+        : "ORDER BY taskCount DESC, workflowCount DESC";
+
+    const result = await session.run(
+      `
       MATCH (a:Agent)
       OPTIONAL MATCH (a)-[:EXECUTES]->(t:Task)
       OPTIONAL MATCH (a)-[:ASSIGNED_TO]->(w:Workflow)
       RETURN a.name AS name, a.role AS role, a.status AS status,
         count(DISTINCT t) AS taskCount, count(DISTINCT w) AS workflowCount
-      ORDER BY taskCount DESC, workflowCount DESC
-    `);
+      ${orderByClause}
+      SKIP $skip LIMIT $limit
+      `,
+      { skip: neo4j.int(skip), limit: neo4j.int(limit) }
+    );
 
-    return result.records.map((record) => ({
+    const data = result.records.map((record) => ({
       name: record.get("name"),
       role: record.get("role"),
       status: record.get("status"),
       taskCount: record.get("taskCount").toNumber(),
       workflowCount: record.get("workflowCount").toNumber(),
     }));
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   } finally {
     await session.close();
   }
