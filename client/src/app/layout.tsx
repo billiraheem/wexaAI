@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Spectral } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/hooks/useTheme";
 
-const spectral = Spectral({
-  variable: "--font-spectral",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -25,10 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${spectral.variable} h-full`}>
+    <html lang="en" className={`${inter.variable} h-full`}>
       <body
         className="min-h-full flex flex-col antialiased"
-        style={{ fontFamily: "var(--font-spectral), Georgia, serif" }}
+        style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
       >
         <ThemeProvider>
           <ToastProvider>

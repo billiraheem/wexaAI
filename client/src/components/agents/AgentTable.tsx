@@ -15,6 +15,7 @@ interface AgentTableProps {
   maxTasks: number;
   selectedAgentName?: string;
   onAgentClick: (agentName: string) => void;
+  pageOffset?: number;
 }
 
 export function AgentTable({
@@ -22,6 +23,7 @@ export function AgentTable({
   maxTasks,
   selectedAgentName,
   onAgentClick,
+  pageOffset = 0,
 }: AgentTableProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -77,7 +79,7 @@ export function AgentTable({
                     color: "var(--color-primary)",
                   }}
                 >
-                  {index + 1}
+                  {pageOffset + index + 1}
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-medium truncate" style={{ color: "var(--color-text)" }}>

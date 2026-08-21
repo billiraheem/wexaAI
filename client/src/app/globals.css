@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --font-sans: "Spectral", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
 
   --color-bg: #FBF8F3;
   --color-bg-alt: #F3EDE4;

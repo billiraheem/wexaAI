@@ -150,14 +150,20 @@ export async function fetchSharedDependencies(w1: string, w2: string) {
   }>>(`/analysis/shared-deps?w1=${encodeURIComponent(w1)}&w2=${encodeURIComponent(w2)}`);
 }
 
-export async function fetchAgentLoad() {
-  return apiFetch<Array<{
-    name: string;
-    role: string;
-    status: string;
-    taskCount: number;
-    workflowCount: number;
-  }>>("/analysis/agent-load");
+export async function fetchAgentLoad(page: number = 1, limit: number = 10, sortBy: string = "tasks") {
+  return apiFetch<{
+    data: Array<{
+      name: string;
+      role: string;
+      status: string;
+      taskCount: number;
+      workflowCount: number;
+    }>;
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }>(`/analysis/agent-load?page=${page}&limit=${limit}&sortBy=${encodeURIComponent(sortBy)}`);
 }
 
 export async function fetchShortestPath(from: string, to: string) {
